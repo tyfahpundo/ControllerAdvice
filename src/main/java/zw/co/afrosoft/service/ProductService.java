@@ -1,6 +1,8 @@
 package zw.co.afrosoft.service;
 
 import org.springframework.stereotype.Service;
+import zw.co.afrosoft.exceptions.NoDataFoundException;
+import zw.co.afrosoft.exceptions.ResourceNotFoundException;
 import zw.co.afrosoft.model.Product;
 
 import java.util.ArrayList;
@@ -20,10 +22,16 @@ public class ProductService {
     }
 
     public List<Product> getProducts(){
+        if(list.isEmpty()){
+            throw new NoDataFoundException("Products Not Found");
+        }
         return list;
     }
     public Product getProduct(long id){
         Optional<Product> theProduct = list.stream().filter(p-> p.getId() == id).findFirst();
+        if(!theProduct.isPresent()){
+            throw new ResourceNotFoundException("Product Not Found for id->"+ id);
+        }
         return theProduct.get();
     }
 }

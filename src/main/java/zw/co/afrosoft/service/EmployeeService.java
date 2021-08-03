@@ -1,6 +1,8 @@
 package zw.co.afrosoft.service;
 
 import org.springframework.stereotype.Service;
+import zw.co.afrosoft.exceptions.NoDataFoundException;
+import zw.co.afrosoft.exceptions.ResourceNotFoundException;
 import zw.co.afrosoft.model.Employee;
 
 import java.util.ArrayList;
@@ -20,11 +22,17 @@ public class EmployeeService {
     }
 
     public List<Employee> getList(){
-        return list;
+        if(list.size()> 0){
+            return list;
+        }
+        throw new NoDataFoundException("No Employees found");
     }
 
     public Employee getEmployee(long id){
         Optional<Employee> theEmployee = list.stream().filter(e-> e.getId() == id).findFirst();
+        if(!theEmployee.isPresent()){
+            throw new ResourceNotFoundException("Employee not found for id->"+id);
+        }
         return theEmployee.get();
     }
 }
